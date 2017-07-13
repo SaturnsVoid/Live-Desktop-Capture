@@ -1,0 +1,34 @@
+<html lang="zh-TW">
+<head></head>
+<body>
+<center>
+<h1>Live Screen Capture</h1>
+<img id="image" width="700" height="500"/>
+</center>
+</body>
+</html>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+var url = "ws://127.0.0.1:80/connws/";
+ws = new WebSocket(url);
+
+ws.onopen = function() {
+  var data = {
+    "Action" : "requireConnect"
+  };
+  ws.send(JSON.stringify(data));
+}
+
+ws.onmessage = function(e) {
+    var res = JSON.parse(e.data);
+    $("#image").attr("src", "data:image/png;base64," + res["img64"]);
+}
+
+ws.onclose = function(e) {
+    console.log("[onclose] connection closed (" + e.code + ")");
+}
+
+ws.onerror = function (e) {
+    console.log("[onerror] error!");
+}
+</script>
